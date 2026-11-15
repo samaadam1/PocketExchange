@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pocket Exchange</title>
     <link rel="stylesheet" href="src/style.css">
+
+    <!-- type="module" tells the browser that the script is a JavaScript module. -->
+    <!-- A module is a file that can import code from other files and export its own code for other files to use. -->
+    <script type="module" src="/src/main.ts"></script>
+
 </head>
 
 <body>
@@ -23,24 +29,24 @@
                 <div>
                     <label for="from">From:</label>
                     <select id="from">
-                        <option value="EGP">EGP</option>
+                        <!-- <option value="EGP">EGP</option>
                         <option value="USD">USD</option>
                         <option value="EUR" selected>EUR</option>
                         <option value="GBP">GBP</option>
                         <option value="SAR">SAR</option>
-                        <option value="AUD">AUD</option>
+                        <option value="AUD">AUD</option> -->
                     </select>
                 </div>
                 <button id="swap">Swap</button>
                 <div>
                     <label for="to">To:</label>
                     <select id="to">
-                        <option value="EGP" selected>EGP</option>
+                        <!-- <option value="EGP" selected>EGP</option>
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
                         <option value="GBP">GBP</option>
                         <option value="SAR">SAR</option>
-                        <option value="AUD">AUD</option>
+                        <option value="AUD">AUD</option> -->
                     </select>
                 </div>
             </div>
@@ -85,6 +91,7 @@
         </section>
     </main>
 
+    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
