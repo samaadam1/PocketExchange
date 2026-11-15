@@ -1,0 +1,60 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 420px;
+    /* aligns the whole column in the center of the page */
+    /* margin-top: 0;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    */
+    margin: 0 auto;
+
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    color: black;
+}
+
+
+/* Headings, labels, <output>, list items and plain text do inherit from body. The form controls are the only ones that don't. */
+input,
+select,
+button {
+    font: inherit;
+}
+
+#convert,
+#clear_history {
+    margin-top: 10px;
+    display: block;
+}
+
+#result {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.convertion_input {
+    display: flex;
+    flex-direction: row;
+
+    /* works along the main axis. (row) */
+    justify-content: space-between;
+
+    /*centers items along the cross axis (vertically in this case) */
+    align-items: center;
+
+    gap: 8px;
+    width: 100%;
+    /* never wider than the body */
+    flex-wrap: wrap;
+    /* items go to a second line instead of overflowing */
+}
+
+.history_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
