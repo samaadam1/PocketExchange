@@ -24,7 +24,11 @@ button {
     font: inherit;
 }
 
-#convert,
+button:disabled {
+    opacity: 0.5;
+    /* fades the whole button, text included. */
+}
+
 #clear_history {
     margin-top: 10px;
     display: block;
@@ -34,6 +38,19 @@ button {
     margin-top: 10px;
     margin-bottom: 10px;
     display: block;
+}
+
+#message {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+    color: red;
+}
+
+#convert {
+    margin-top: 10px;
+    display: block;
+    background-color: rgb(93, 93, 220);
 }
 
 .convertion_input {
