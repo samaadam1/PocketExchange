@@ -15,23 +15,31 @@
 
     <main class="main">
         <section class="covertion">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" placeholder="0.00" min="0" step="any">
-            <label for="from">From:</label>
-            <select id="from">
-                <option value="EGP">EGP</option>
-                <option value="USD">USD</option>
-                <option value="EUR" selected>EUR</option>
-                <option value="GBP">GBP</option>
-            </select>
-            <button id="swap">Swap</button>
-            <label for="to">To:</label>
-            <select id="to">
-                <option value="EGP" selected>EGP</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-            </select>
+            <div class="convertion_input">
+                <div>
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" placeholder="0.00" min="0" step="any">
+                </div>
+                <div>
+                    <label for="from">From:</label>
+                    <select id="from">
+                        <option value="EGP">EGP</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR" selected>EUR</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                </div>
+                <button id="swap">Swap</button>
+                <div>
+                    <label for="to">To:</label>
+                    <select id="to">
+                        <option value="EGP" selected>EGP</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                </div>
+            </div>
             <button id="convert">Convert</button>
             <output id="message"></output>
             <output id="result">0.00 EGP</output>
@@ -40,23 +48,25 @@
 
         <section class="history">
             <div class="history_header">
-                <h2>History</h2>
-                <label for="filter_history">Filter:</label>
-                <select id="filter_history">
-                    <option value="all" selected>All</option>
-                    <optgroup label="From">
-                        <option value="from_EGP">EGP</option>
-                        <option value="from_USD">USD</option>
-                        <option value="from_EUR">EUR</option>
-                        <option value="from_GBP">GBP</option>
-                    </optgroup>
-                    <optgroup label="To">
-                        <option value="to_EGP">EGP</option>
-                        <option value="to_USD">USD</option>
-                        <option value="to_EUR">EUR</option>
-                        <option value="to_GBP">GBP</option>
-                    </optgroup>
-                </select>
+                <span>History</span>
+                <div class="history_filter">
+                    <label for="filter_history">Filter:</label>
+                    <select id="filter_history">
+                        <option value="all" selected>All</option>
+                        <optgroup label="From">
+                            <option value="from_EGP">EGP</option>
+                            <option value="from_USD">USD</option>
+                            <option value="from_EUR">EUR</option>
+                            <option value="from_GBP">GBP</option>
+                        </optgroup>
+                        <optgroup label="To">
+                            <option value="to_EGP">EGP</option>
+                            <option value="to_USD">USD</option>
+                            <option value="to_EUR">EUR</option>
+                            <option value="to_GBP">GBP</option>
+                        </optgroup>
+                    </select>
+                </div>
             </div>
             <hr>
             <ul id="history_list">
