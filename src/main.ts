@@ -1,12 +1,13 @@
 import createStore from './store.ts';
 import { loadRates } from './rates.ts';
-import { convert, validateAmount } from './state.ts';
+import { addConversion, convert, swapCurrencies, validateAmount } from './state.ts';
 import type { AppState, Conversion } from './types.ts';
 
 const amountInput = document.querySelector<HTMLInputElement>('#amount')!;
 const fromSelect = document.querySelector<HTMLSelectElement>('#from')!;
 const toSelect = document.querySelector<HTMLSelectElement>('#to')!;
 const convertButton = document.querySelector<HTMLButtonElement>('#convert')!;
+const swapButton = document.querySelector<HTMLButtonElement>('#swap')!;
 const message = document.querySelector<HTMLOutputElement>('#message')!;
 const result = document.querySelector<HTMLOutputElement>('#result')!;
 
@@ -81,7 +82,11 @@ function render(state: AppState): void {
   - undefined (the history is empty, so there's no item 0). 
   */
   const latest: Conversion | undefined = state.history[0];
-  result.textContent = latest === undefined ? `0.00 ${state.to}` : covertionResult(latest);
+  // it is only shown while it matches the selected currencies: after a swap or a currency change it is cleared
+  result.textContent =
+    latest !== undefined && latest.from === state.from && latest.to === state.to
+      ? covertionResult(latest)
+      : `0.00 ${state.to}`;
 }
 
 //////////////////////////// EVENT LISTENERS ///////////////////////////
@@ -92,6 +97,37 @@ fromSelect.addEventListener('change', () => {
 
 toSelect.addEventListener('change', () => {
   store.setState((state) => ({ ...state, to: toSelect.value }));
+});
+
+// Converts the amount with the selected currencies and adds it to the history (render shows the new result).
+function addNewConversion(newAmount: number): void {
+  store.setState((state) => {
+    // Create a new conversion object.
+    const newConversion: Conversion = {
+      id: crypto.randomUUID(), //gives the new conversion a unique ID.
+      from: state.from,
+      to: state.to,
+      amount: newAmount,
+      result: convert(newAmount, state.from, state.to, rates),
+      date: new Date().toISOString(),
+    };
+    // return new state: the conversion is added to the history, and the amount is updated.
+    return { ...addConversion(state, newConversion), amount: newAmount };
+  });
+}
+
+// The Swap button is clicked: From and To trade places (render updates both dropdowns),
+// then the amount is converted again the other way round.
+swapButton.addEventListener('click', () => {
+  store.setState((state) => swapCurrencies(state));
+
+  // clear the old result (done after setState, because render writes the result line)
+  result.textContent = '';
+
+  // with a valid amount, convert it again and show the new result (no error message otherwise)
+  if (validateAmount(amountInput.value) === null) {
+    addNewConversion(Number(amountInput.value));
+  }
 });
 
 // The Convert button is clicked: validate the amount, then convert and add it to the history.
@@ -109,20 +145,7 @@ convertButton.addEventListener('click', () => {
   }
 
   // 2. valid: convert and add it to the history (render clears the message and shows it)
-  const newAmount = Number(amountInput.value);
-  store.setState((state) => {
-    // Create a new conversion object.
-    const newConversion: Conversion = {
-      id: crypto.randomUUID(), //gives the new conversion a unique ID.
-      from: state.from,
-      to: state.to,
-      amount: newAmount,
-      result: convert(newAmount, state.from, state.to, rates),
-      date: new Date().toISOString(),
-    };
-    // return new state: the new amount and the new conversion are added to the history.
-    return { ...state, amount: newAmount, history: [newConversion, ...state.history] };
-  });
+  addNewConversion(Number(amountInput.value));
 });
 
 ////////////////////////// // STARTUP //////////////////////////
