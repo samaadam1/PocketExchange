@@ -1,6 +1,7 @@
 import createStore from './store.ts';
 import { loadRates } from './rates.ts';
-import { addConversion, convert, swapCurrencies, validateAmount } from './state.ts';
+import { addConversion, convert, createIdGenerator, swapCurrencies, validateAmount } from './state.ts';
+import { loadHistory, saveHistory } from './storage.ts';
 import type { AppState, Conversion } from './types.ts';
 
 const amountInput = document.querySelector<HTMLInputElement>('#amount')!;
@@ -16,10 +17,13 @@ const store = createStore({
   from: 'EUR',
   to: 'EGP',
   amount: 0,
-  history: [],
+  history: loadHistory(),   // the saved history, or [] when nothing is saved (or the saved data is broken)
   filter: null,
   status: 'loading',
 });
+
+// Gives a new id on each call (1, 2, 3, ...) and keeps counting after a refresh. Created once, here.
+const nextId = createIdGenerator();
 
 // The loaded rates. Not part of the state: filled once, when loadRates() finishes.
 const rates: Record<string, number> = {};
@@ -104,7 +108,7 @@ function addNewConversion(newAmount: number): void {
   store.setState((state) => {
     // Create a new conversion object.
     const newConversion: Conversion = {
-      id: crypto.randomUUID(), //gives the new conversion a unique ID.
+      id: String(nextId()), // the next number as text, because Conversion.id is a string
       from: state.from,
       to: state.to,
       amount: newAmount,
@@ -161,6 +165,7 @@ async function start(): Promise<void> {
 // Later, every time setState accepts a new state, it goes through the list and runs each function:
 // subscribers.forEach((subscriber) => subscriber(state));
 store.subscribe(render);
+store.subscribe((state) => saveHistory(state.history));   // save the history on every state change
 render(store.getState());   // draw the starting state once
 
 start();
