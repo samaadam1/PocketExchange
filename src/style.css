@@ -75,3 +75,27 @@ button:disabled {
     flex-direction: row;
     justify-content: space-between;
 }
+
+/* the page columns shrink to their content, so the history uses the full 420px */
+.main,
+.history {
+    width: 100%;
+}
+
+/* remove the bullets and the default list spacing */
+#history_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* each row: the calculation on the left, the delete button on the right */
+#history_list li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #ddd;
+}

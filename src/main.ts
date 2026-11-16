@@ -1,6 +1,16 @@
 import createStore from './store.ts';
 import { loadRates } from './rates.ts';
-import { addConversion, convert, createIdGenerator, swapCurrencies, validateAmount } from './state.ts';
+import {
+  addConversion,
+  clearHistory,
+  convert,
+  createIdGenerator,
+  getTotals,
+  getVisibleHistory,
+  removeConversion,
+  swapCurrencies,
+  validateAmount,
+} from './state.ts';
 import { loadHistory, saveHistory } from './storage.ts';
 import type { AppState, Conversion } from './types.ts';
 
@@ -11,6 +21,10 @@ const convertButton = document.querySelector<HTMLButtonElement>('#convert')!;
 const swapButton = document.querySelector<HTMLButtonElement>('#swap')!;
 const message = document.querySelector<HTMLOutputElement>('#message')!;
 const result = document.querySelector<HTMLOutputElement>('#result')!;
+const filterSelect = document.querySelector<HTMLSelectElement>('#filter_history')!;
+const historyList = document.querySelector<HTMLUListElement>('#history_list')!;
+const totalOutput = document.querySelector<HTMLOutputElement>('#total_conversions')!;
+const clearButton = document.querySelector<HTMLButtonElement>('#clear_history')!;
 
 // This creates the store, and the object passed in, is its initial state, the starting values before the user has done anything.
 const store = createStore({
@@ -51,13 +65,44 @@ function fillOptions(select: HTMLSelectElement, codes: string[]): void {
   select.replaceChildren(...codes.map((code) => new Option(code, code)));
 }
 
-// "100 EUR = 5,271.74 EGP"
-function covertionResult(item: Conversion): string {
-  const formatted = item.result.toLocaleString('en-US', {
+// 5271.7391 -> "5,271.74"
+function formatMoney(value: number): string {
+  return value.toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return `${item.amount} ${item.from} = ${formatted} ${item.to}`;
+}
+
+// "100 EUR = 5,271.74 EGP". The history list passes '->' to get "100 EUR -> 5,271.74 EGP".
+function covertionResult(item: Conversion, symbol: string = '='): string {
+  return `${item.amount} ${item.from} ${symbol} ${formatMoney(item.result)} ${item.to}`;
+}
+
+// "7,696.74 EGP | 25.32 USD": the total converted into each currency, for the entries shown.
+function totalsText(state: AppState): string {
+  const totals = getTotals({ ...state, history: getVisibleHistory(state) });
+  const parts = Object.keys(totals)
+    .sort()   // alphabetical, so the order doesn't change from one conversion to the next
+    .map((code) => `${formatMoney(totals[code])} ${code}`);
+  return parts.length === 0 ? '0.00' : parts.join(' | ');
+}
+
+// One <li> of the history list: the conversion text and a delete button.
+function renderItem(item: Conversion): HTMLLIElement {
+  const li = document.createElement('li');
+
+  const text = document.createElement('span');
+  text.textContent = covertionResult(item, '->');
+
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'delete';
+  remove.dataset['id'] = item.id;   // tells the list listener which conversion to delete
+  remove.setAttribute('aria-label', 'Delete this conversion');
+  remove.textContent = 'x';
+
+  li.append(text, remove);
+  return li;
 }
 
 // Draws the page from the state. It runs every time the state changes.
@@ -91,6 +136,13 @@ function render(state: AppState): void {
     latest !== undefined && latest.from === state.from && latest.to === state.to
       ? covertionResult(latest)
       : `0.00 ${state.to}`;
+
+  // the history list, the totals and the filter, all drawn from the state
+  const visible = getVisibleHistory(state);
+  historyList.replaceChildren(...visible.map(renderItem));
+  totalOutput.textContent = totalsText(state);
+  filterSelect.value = state.filter ?? '';
+  clearButton.disabled = state.history.length === 0;
 }
 
 //////////////////////////// EVENT LISTENERS ///////////////////////////
@@ -150,6 +202,29 @@ convertButton.addEventListener('click', () => {
 
   // 2. valid: convert and add it to the history (render clears the message and shows it)
   addNewConversion(Number(amountInput.value));
+});
+
+// The filter dropdown changed: '' means "All" (no filter).
+filterSelect.addEventListener('change', () => {
+  const value = filterSelect.value;
+  store.setState((state) => ({ ...state, filter: value === '' ? null : value }));
+});
+
+// Clear All is clicked: the history becomes empty.
+clearButton.addEventListener('click', () => {
+  store.setState((state) => clearHistory(state));
+});
+
+// One listener for the whole list (not one per item): it finds out which delete button was clicked.
+historyList.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+
+  const button = target.closest<HTMLButtonElement>('button.delete');
+  const id = button?.dataset['id'];
+  if (id === undefined) return;
+
+  store.setState((state) => removeConversion(state, id));
 });
 
 ////////////////////////// // STARTUP //////////////////////////
