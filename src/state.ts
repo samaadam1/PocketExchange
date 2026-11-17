@@ -60,7 +60,7 @@ export function swapCurrencies(state: AppState): AppState {
 
 // Returns the history for the selected filter, or the whole history when there is no filter.
 // A conversion matches when the filter currency is its From or its To. The state it receives is not changed.
-export function getVisibleHistory(state: AppState): Conversion[] {
+export function getFilteredHistory(state: AppState): Conversion[] {
     const { history, filter } = state;
     if (filter === null) return history; // no filter, return the whole history
     return history.filter((item) => item.from === filter || item.to === filter); // only return the conversions that match the filter
