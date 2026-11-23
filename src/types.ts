@@ -5,18 +5,18 @@ export type statusState = "loading" | "ready";
 
 export interface Conversion {
     id: number;
-    from: string;
-    to: string;
-    amount: string;
-    result: string;
+    from: CurrencyCode;
+    to: CurrencyCode;
+    amount: number;
+    result: number;
     date: string;
 
 }
 
 export interface AppState {
-    from: string;
-    to: string;
-    amount: string;
+    from: CurrencyCode;
+    to: CurrencyCode;
+    amount: number;
     history: Conversion[];
     filter: CurrencyCode | null;
     status: statusState;

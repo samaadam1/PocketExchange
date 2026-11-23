@@ -8,6 +8,8 @@ export const RATES: Record<CurrencyCode, number> = {
     EGP: 48.5,
 };
 
-export function LoadRates(): Record<CurrencyCode, number> {
+export async function loadRates(): Promise<Record<CurrencyCode, number>> {
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return RATES;
 }
