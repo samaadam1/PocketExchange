@@ -6,3 +6,8 @@ export const RATES: Record<string, number> = {
     AED: 3.67,
     EGP: 48.5,
 };
+
+export function LoadRates(): Record<string, number>
+{
+return RATES;
+}
