@@ -1,9 +1,23 @@
 import { loadRates } from "./rates";
 import { convert } from "./state";
-import type { CurrencyCode } from "./types";
+import type { AppState, CurrencyCode } from "./types";
+import createStore from "./store";
 
-let rates: Record<CurrencyCode, number>; // rates are assigned later, in start(),
 
+let rates: Record<CurrencyCode, number>; // rates are assigned later, in start()
+
+const initialState: AppState = {
+  from: "EGP",
+  to: "USD",
+  amount: 0,
+  history: [],
+  filter: null,
+  status: "loading",
+};
+
+//let state: AppState = initialState;
+
+const store = createStore(initialState);
 
 const fromSelect = document.querySelector<HTMLSelectElement>("#from");
 const toSelect = document.querySelector<HTMLSelectElement>("#to");
@@ -17,7 +31,8 @@ const convertMessage = document.querySelector<HTMLOutputElement>("#message");
 async function main(): Promise<void> {
 
   await start();
-  eventListeners();
+  store.subscribe(render);
+
 }
 
 main().catch((error) => {
@@ -36,6 +51,7 @@ async function start(): Promise<void> {
   convertMessage!.textContent = "";
   convertButton!.disabled = false;
   fillSelectOptions();
+
 }
 
 function eventListeners(): void {
@@ -44,6 +60,13 @@ function eventListeners(): void {
   }
 
   convertButton.addEventListener("click", convertCurrency);
+
+
+
+}
+
+function render(): void {
+  eventListeners();
 
 }
 
@@ -112,11 +135,27 @@ function convertCurrency(): void {
 
   const result = convert(amount, fromCurrency, toCurrency, rates);
   convertResult!.textContent = `${result.toFixed(2)} ${toCurrency}`;
+
+  store.setState((oldState) => ({
+    ...oldState,
+    from: fromCurrency,
+    to: toCurrency,
+    amount,
+    history: [
+      ...oldState.history,
+      {
+        id: oldState.history.length + 1,
+        from: fromCurrency,
+        to: toCurrency,
+        amount,
+        result,
+        date: new Date().toISOString(),
+      },
+    ],
+  }));
 }
 
-function render(): void {
 
-}
 
 
 
