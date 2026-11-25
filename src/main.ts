@@ -1,7 +1,8 @@
 import { loadRates } from "./rates";
-import { AddConversion, convert, getTotals, getVisibleHistory, removeConversion, swapCurrencies } from "./state";
+import { AddConversion, convert, getTotals, getVisibleHistory, removeConversion, setLastId, swapCurrencies } from "./state";
 import type { AppState, CurrencyCode, Conversion } from "./types";
 import createStore from "./store";
+import { loadHistory, saveHistory, saveLastId, loadLastId } from "./storage";
 
 let rates: Record<CurrencyCode, number>; // rates are assigned later, in start()
 
@@ -15,6 +16,7 @@ const initialState: AppState = {
 };
 
 const store = createStore(initialState);
+const loadedHistory = loadHistory();
 
 const fromSelect = document.querySelector<HTMLSelectElement>("#from");
 const toSelect = document.querySelector<HTMLSelectElement>("#to");
@@ -33,7 +35,17 @@ const clearHistoryButton = document.querySelector<HTMLButtonElement>("#clear_his
 async function main(): Promise<void> {
 
   store.subscribe(render);
+  store.subscribe(saveHistory);
+  store.subscribe(saveLastId);
+
+  if (loadedHistory) {
+    store.setState((old) => ({ ...old, history: loadedHistory.history }));
+    const lastId = loadLastId();
+    setLastId(lastId);
+  }
+
   render(store.getState());
+
   await start();
 
   // eventListeners() doesn't keep checking. It runs once, and it registers handlers with the browser. 

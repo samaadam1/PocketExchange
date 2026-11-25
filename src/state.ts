@@ -2,9 +2,24 @@ import type { CurrencyCode } from "./types";
 import type { AppState, Conversion } from "./types";
 
 
-const maxHistoryLength = 20;
-let IdGenerator = createIdGenerator(0);
 
+const maxHistoryLength = 20;
+let IdGenerator = createIdGenerator();
+let lastIssuedId = 0;
+
+export function nextId(): number {
+    lastIssuedId = IdGenerator();
+    return lastIssuedId;
+}
+
+export function setLastId(lastId: number): void {
+    IdGenerator = createIdGenerator(lastId);
+}
+
+export function getLastId(): number {
+    return lastIssuedId;
+
+}
 export function convert(amount: number, from: CurrencyCode, to: CurrencyCode, rates: Record<CurrencyCode, number>): number {
     const fromRate = rates[from];
     const toRate = rates[to];
@@ -15,7 +30,7 @@ export function convert(amount: number, from: CurrencyCode, to: CurrencyCode, ra
 export function AddConversion(state: AppState, result: number): AppState {
 
     const newConversion: Conversion = {
-        id: IdGenerator(),
+        id: nextId(),
         from: state.from,
         to: state.to,
         amount: state.amount,
