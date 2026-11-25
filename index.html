@@ -52,7 +52,7 @@
             </div>
             <button id="convert">Convert</button>
             <output id="message"></output>
-            <output id="result">0.00 EGP</output>
+            <output id="result"></output>
         </section>
         <hr>
 
@@ -74,8 +74,14 @@
             </div>
             <hr>
             <ul id="history_list">
-                <!-- History items will be appended here -->
+                <!-- History items are cloned from #history_item and appended here -->
             </ul>
+            <template id="history_item">
+                <li>
+                    <span class="history_item_text"></span>
+                    <button type="button" class="conversion_delete_button" data-id="">x</button>
+                </li>
+            </template>
             <hr>
             <div class="history_footer">
                 <span>Totals: </span>

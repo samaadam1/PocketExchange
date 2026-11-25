@@ -19,6 +19,7 @@ export default function createStore(initialState: AppState) {
 
         }
         state = newState;
+        //look for mapping here, foroff, forin
         subscribers.forEach((subscriber) => subscriber(state));
 
     }
