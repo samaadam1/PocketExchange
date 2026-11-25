@@ -113,6 +113,8 @@ function fillHistoryTable(filteredHistory: Conversion[]): void {
 
   for (const conversion of filteredHistory) {
 
+    // importNode() creates a copy of the template content
+    // true means deep copy, so it copies the children of the template as well
     const item = document.importNode(historyItemTemplate.content, true);
     const text = item.querySelector<HTMLSpanElement>(".history_item_text");
     const deleteButton = item.querySelector<HTMLButtonElement>(".conversion_delete_button");
@@ -186,6 +188,11 @@ function fillSelectOptions(): void {
     optionTo.value = code;
     optionTo.textContent = code;
     toSelect!.appendChild(optionTo);
+
+    const optionFilter = document.createElement("option");
+    optionFilter.value = code;
+    optionFilter.textContent = code;
+    historyFilter!.appendChild(optionFilter);
   }
 
 }

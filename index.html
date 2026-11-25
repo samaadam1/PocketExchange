@@ -63,12 +63,12 @@
                     <label for="filter_history">Filter:</label>
                     <select id="filter_history">
                         <option value="" selected>All</option>
-                        <option value="EGP">EGP</option>
+                        <!-- <option value="EGP">EGP</option>
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
                         <option value="GBP">GBP</option>
                         <option value="SAR">SAR</option>
-                        <option value="AED">AED</option>
+                        <option value="AED">AED</option>  -->
                     </select>
                 </div>
             </div>
@@ -76,6 +76,8 @@
             <ul id="history_list">
                 <!-- History items are cloned from #history_item and appended here -->
             </ul>
+            <!-- it's closer to a stamp or a blueprint than a container.
+             <template> holds markup that the browser keeps but doesn't show or run. -->
             <template id="history_item">
                 <li>
                     <span class="history_item_text"></span>
@@ -91,7 +93,6 @@
         </section>
     </main>
 
-    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
